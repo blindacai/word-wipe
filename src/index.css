@@ -1,1 +1,99 @@
+:root{
+  --theme-color: darkslategrey;
+  --border-weight: 1px;
+}
 
+body{
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito', sans-serif;
+  background: #eee;
+}
+
+.App{
+  margin: 0 auto;
+  height: 100vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Instruction */
+.instruction{
+  font-size: calc(15px + 1.1vw);
+  font-weight: 700;
+  color: var(--theme-color);
+}
+
+
+/* Gameboard */
+.board-flex{
+  width: 60vmin;
+  height: 60vmin;
+  margin: 0 auto;
+  margin-top: 25px;
+  box-shadow: 0px 1px 30px var(--theme-color);
+
+  display: flex;
+  flex-wrap: wrap;
+
+  font-size: calc(3px + 1.7vh);
+  font-weight: 600;
+  color: var(--theme-color);
+}
+
+@media screen and (max-width: 768px){
+  .board-flex {
+    font-size: calc(10px + 0.7vw);
+  }
+}
+
+@media screen and (max-width: 480px){
+  .board-flex {
+    width: 80vw;
+    height: 80vw;
+    font-size: calc(8px + 0.7vw);
+  }
+}
+
+.tile{
+  width: 10%;
+  height: 10%;
+  border-bottom: var(--border-weight) solid var(--theme-color);
+  border-right: var(--border-weight) solid var(--theme-color);
+  box-sizing: border-box;
+  cursor: pointer;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tile:hover{
+  background-color: rgba(47, 79, 79, 0.8);
+  font-size: 1.15em;
+  color: greenyellow;
+}
+
+.tile:nth-child(-n + 10){
+  border-top: var(--border-weight) solid var(--theme-color);
+}
+
+.tile:nth-child(10n + 1){
+  border-left: var(--border-weight) solid var(--theme-color);
+}
+
+
+/* Hints */
+.hints{
+  margin-top: 20px;
+  font-size: calc(12px + 0.5vw);
+  font-family: 'Montserrat', sans-serif;
+  color: var(--theme-color);
+}
+
+.hints div{
+  padding-bottom: 5px;
+}
