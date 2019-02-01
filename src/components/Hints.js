@@ -6,7 +6,7 @@ const Hints = () => {
     two: {id: 2, body: "A man who has people working for him"},
     three: {id: 3, body: "Having or showing very great skill or proficiency"}
   }
-  
+
   return(
     <div className="hints">
       <div>{hint.one.body}</div>
