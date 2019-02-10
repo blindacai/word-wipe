@@ -1,23 +1,40 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
+import { selectTile } from '../actions/gameActions'
 
 class Tile extends PureComponent{
   handleClick = () => {
-    const tile = {
-      "id": this.props.id,
-      "value": this.props.value
-    }
-    this.props.selectTile(tile);
+    this.props.select();
   }
 
   render(){
-    const tile = this.props;
+    const {value, tile} = this.props;
+    let css = "";
+    if(tile){
+      css = tile.css;
+    }
 
     return (
-      <div className={"tile " + tile.selectCSS} id={tile.id} onClick={this.handleClick} >
-        {tile.value}
+      <div className={"tile " + css} onClick={this.handleClick} >
+        {value}
       </div>
     )
   }
 }
 
-export default Tile
+const mapStateToProps = (state, ownProps) => {
+  return {
+    tile: state.selected[ownProps.id]
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const {id, value} = ownProps;
+  return {
+    select: () => {
+      dispatch(selectTile(id, value))
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tile)

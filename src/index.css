@@ -86,7 +86,7 @@ body{
   transition: none;
 }
 
-.failCSS, .failCSS:hover{
+.failMatch, .failMatch:hover{
   border-block-end-width: thick; 
   writing-mode: horizontal-tb;
   border-block-end-color: #CD5C5C;
