@@ -19,30 +19,74 @@ const initState =
   matched: null
 }
 
+const newTile = (tile) => {
+  const {tileId, tileValue} = tile;
+  return {
+    id: tileId, 
+    value: tileValue,
+    css: "tileSelect"
+  }
+}
+
+const currentOnly = (tile) => {
+  // construct a new tile
+  const {tileId} = tile;
+  const newtile = newTile(tile);
+
+  return {
+    selected: {[tileId]: newtile},
+    allselected: [tileId],
+    direction: null,
+    matched: null
+  }
+}
+
+const newSelect = (state, tile) => {
+  const {selected, allselected} = state;
+  const {tileId} = tile;
+  return {
+    ...state,
+    selected: {
+      ...selected,
+      [tileId]: newTile(tile)
+    },
+    allselected: allselected.concat(tileId)
+  };
+}
+
+const changeCSS = (newselect, newcss) => {
+  let {selected, allselected} = newselect
+  for (let i in allselected){
+    const tid = allselected[i];
+    const tile = selected[tid];
+    selected = {
+      ...selected,
+      [tid]: {
+        ...tile,
+        css: newcss
+      }
+    }
+  }
+  return selected;
+}
+
+const checkTarget = (newselect) => {
+  return false;
+}
+
 const selectReducer = (state = initState, action) =>{
   const {selected, allselected, direction, matched} = state;
 
-  // clear all the previously selected tiles
   if(action.type === 'SELECT_TILE'){
-    // construct a new tile
     const {tile} = action;
-    const {tileId, tileValue} = tile;
-    const newtile = {
-      id: tileId, 
-      value: tileValue,
-      css: "tileSelect"
-    };
+    const {tileId} = tile;
 
+    // clear all the previously selected tiles
     if(matched === "false"){
-      return {
-        selected: {[tileId]: newtile},
-        allselected: [tileId],
-        direction: null,
-        matched: null
-      }
+      return currentOnly(tile);
     }
 
-     // when click on an already selected tile
+    // when click on an already selected tile
     const found = allselected.find(id => {
       return id === tileId;
     })
@@ -52,68 +96,59 @@ const selectReducer = (state = initState, action) =>{
 
     const length = allselected.length;
     if(length === 0){
-      return {
-        ...state,
-        selected: {[tileId]: newtile},
-        allselected: [tileId]
-      }
+      return currentOnly(tile);
     }
-
-    // precondition: length of the target word >= 3
-    let new_selected = {
-      ...selected,
-      [tileId]: newtile
-    }
-    let new_allselected = allselected.concat(tileId);
-    let new_dir = direction;
-    let new_matched = matched;
 
     const lastileId = allselected[length - 1];
     const lastile = selected[lastileId];
+    
+    let newselect = newSelect(state, tile);
 
     if(length === 1){
       if(tileId === lastile.id + 1){
-        new_dir = "right";
+        newselect = {
+          ...newselect,
+          direction: "right"
+        }
       }
       else if(tileId === lastile.id + 10){
-        new_dir = "down";
+        newselect = {
+          ...newselect,
+          direction: "down"
+        }
       }
       else{
-        new_selected = {[tileId]: newtile};
-        new_allselected = [tileId];
+        return currentOnly(tile);
       }
     }
     else{
       if( !(direction === "right" && tileId === lastile.id + 1) &&
           !(direction === "down" && tileId === lastile.id + 10) ){
-            new_selected = {[tileId]: newtile};
-            new_allselected = [tileId];
-            new_dir = null;
+            return currentOnly(tile);
       }
-      else{
-        for (let i in new_allselected){
-          const tid = new_allselected[i];
-          const tile = new_selected[tid];
-          new_selected = {
-            ...new_selected,
-            [tid]: {
-              ...tile,
-              css: "failMatch"
-            }
-          }
+      else 
+      if (newselect.allselected.length > 3){
+        let matched = "";
+        let newcss = "";
+
+        if( checkTarget(newSelect) ){
+          matched = "true"
+          newcss = (direction === "right")? "matchHori" : "matchVert";
         }
-        new_matched = "false";
+        else{
+          matched = "false";
+          newcss = (direction === "right")? "matchHoriFail" : "matchVertFail";
+        }
+
+        newselect = {
+          ...newselect,
+          selected: changeCSS(newselect, newcss),
+          matched: matched
+        }
       }
     }
-
-    return {
-      selected: new_selected,
-      allselected: new_allselected,
-      direction: new_dir,
-      matched: new_matched
-    };
+    return newselect;
   }
-
   return state;
 }
 

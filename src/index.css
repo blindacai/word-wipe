@@ -38,7 +38,7 @@ body{
   display: flex;
   flex-wrap: wrap;
 
-  font-size: calc(3px + 1.7vh);
+  font-size: calc(4px + 1.7vh);
   font-weight: 600;
   color: var(--theme-color);
 }
@@ -86,10 +86,24 @@ body{
   transition: none;
 }
 
-.failMatch, .failMatch:hover{
-  border-block-end-width: thick; 
-  writing-mode: horizontal-tb;
-  border-block-end-color: #CD5C5C;
+.matchHori{
+  border-bottom-color: green;
+  border-bottom-width: 2.5px;
+}
+
+.matchHoriFail{
+  border-bottom-color: #CD5C5C;
+  border-bottom-width: 2.5px;
+}
+
+.matchVert{
+  border-right-color: green;
+  border-right-width: 2.5px;
+}
+
+.matchVertFail{
+  border-right-color: #CD5C5C;
+  border-right-width: 2.5px;
 }
 
 .tile:nth-child(-n + 10){
