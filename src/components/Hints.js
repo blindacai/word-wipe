@@ -9,7 +9,7 @@ const Hints = () => {
 
   return(
     <div className="hints">
-      <div>{hint.one.body}</div>
+      <div>( 1 / 8 ) {hint.one.body}</div>
       <div>{hint.two.body}</div>
       <div>{hint.three.body}</div>
     </div>

@@ -77,79 +77,82 @@ const checkTarget = (newselect) => {
 const selectReducer = (state = initState, action) =>{
   const {selected, allselected, direction, matched} = state;
 
-  if(action.type === 'SELECT_TILE'){
-    const {tile} = action;
-    const {tileId} = tile;
-
-    // clear all the previously selected tiles
-    if(matched === "false"){
-      return currentOnly(tile);
-    }
-
-    // when click on an already selected tile
-    const found = allselected.find(id => {
-      return id === tileId;
-    })
-    if(found){
-      return state;
-    }
-
-    const length = allselected.length;
-    if(length === 0){
-      return currentOnly(tile);
-    }
-
-    const lastileId = allselected[length - 1];
-    const lastile = selected[lastileId];
-    
-    let newselect = newSelect(state, tile);
-
-    if(length === 1){
-      if(tileId === lastile.id + 1){
-        newselect = {
-          ...newselect,
-          direction: "right"
-        }
+  switch(action.type){
+    case 'SELECT_TILE': {
+      const {tile} = action;
+      const {tileId} = tile;
+  
+      // clear all the previously selected tiles
+      if(matched === "false"){
+        return currentOnly(tile);
       }
-      else if(tileId === lastile.id + 10){
-        newselect = {
-          ...newselect,
-          direction: "down"
+  
+      // when click on an already selected tile
+      const found = allselected.find(id => {
+        return id === tileId;
+      })
+      if(found){
+        return state;
+      }
+  
+      const length = allselected.length;
+      if(length === 0){
+        return currentOnly(tile);
+      }
+  
+      const lastileId = allselected[length - 1];
+      const lastile = selected[lastileId];
+  
+      let newselect = newSelect(state, tile);
+  
+      if(length === 1){
+        if(tileId === lastile.id + 1){
+          newselect = {
+            ...newselect,
+            direction: "right"
+          }
+        }
+        else if(tileId === lastile.id + 10){
+          newselect = {
+            ...newselect,
+            direction: "down"
+          }
+        }
+        else{
+          return currentOnly(tile);
         }
       }
       else{
-        return currentOnly(tile);
+        if( !(direction === "right" && tileId === lastile.id + 1) &&
+            !(direction === "down" && tileId === lastile.id + 10) ){
+              return currentOnly(tile);
+        }
+        else 
+        if (newselect.allselected.length > 3){
+          let matched = "";
+          let newcss = "";
+  
+          if( checkTarget(newSelect) ){
+            matched = "true"
+            newcss = (direction === "right")? "matchHori" : "matchVert";
+          }
+          else{
+            matched = "false";
+            newcss = (direction === "right")? "matchHoriFail" : "matchVertFail";
+          }
+  
+          newselect = {
+            ...newselect,
+            selected: changeCSS(newselect, newcss),
+            matched: matched
+          }
+        }
       }
+      return newselect;
     }
-    else{
-      if( !(direction === "right" && tileId === lastile.id + 1) &&
-          !(direction === "down" && tileId === lastile.id + 10) ){
-            return currentOnly(tile);
-      }
-      else 
-      if (newselect.allselected.length > 3){
-        let matched = "";
-        let newcss = "";
-
-        if( checkTarget(newSelect) ){
-          matched = "true"
-          newcss = (direction === "right")? "matchHori" : "matchVert";
-        }
-        else{
-          matched = "false";
-          newcss = (direction === "right")? "matchHoriFail" : "matchVertFail";
-        }
-
-        newselect = {
-          ...newselect,
-          selected: changeCSS(newselect, newcss),
-          matched: matched
-        }
-      }
-    }
-    return newselect;
+    default:
+      return state
   }
-  return state;
 }
 
 export default selectReducer

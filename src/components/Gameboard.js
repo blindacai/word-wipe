@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
 import Tile from './Tile';
-
-const randomChar = () => {
-  const r = Math.floor(Math.random() * 26);
-  return String.fromCharCode(65 + r);
-}
+import { connect } from 'react-redux';
 
 class Gameboard extends Component {
   render(){
-    const letters = Array(10*10).fill(null).map(_ => {return randomChar()});
-    const tiles = letters.map((letter, index) =>{
+    const tiles = this.props.letters.map((letter, index) =>{
       return (<Tile key={index} id={index} value={letter} />)
     })
 
@@ -21,4 +16,10 @@ class Gameboard extends Component {
   }
 }
 
-export default Gameboard
+const mapStateToProps = (state) => {
+  return {
+    letters: state.board
+  }
+}
+
+export default connect(mapStateToProps)(Gameboard)

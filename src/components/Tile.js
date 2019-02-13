@@ -24,7 +24,7 @@ class Tile extends PureComponent{
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    tile: state.selected[ownProps.id]
+    tile: state.select.selected[ownProps.id]
   }
 }
 
