@@ -6,9 +6,11 @@ const Hints = (props) => {
   const {matched, hintPos} = props;
 
   if(matched === "true"){
+    props.transitOn();
     setTimeout(() => {
       props.restoreMatch();
       props.nextHint();
+      props.transitOff();
     }, 1500);
   }
 
@@ -38,6 +40,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     nextHint: () => {
       dispatch({type: 'NEXT_HINT'})
+    },
+    transitOn: () => {
+      dispatch({type: "TRANSIT_ON"})
+    },
+    transitOff: () => {
+      dispatch({type: "TRANSIT_OFF"})
     }
   }
 }

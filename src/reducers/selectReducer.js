@@ -25,7 +25,8 @@ const clearState =
 const initState =
 {
   ...clearState,
-  currentWord: 0
+  currentWord: 0,
+  transit: false
 }
 
 const newTile = (tile) => {
@@ -84,10 +85,14 @@ const checkTarget = (newstate) => {
 }
 
 const selectReducer = (state = initState, action) =>{
-  const {selected, allselected, direction, matched, currentWord} = state;
+  const {selected, allselected, direction, matched, currentWord, transit} = state;
 
   switch(action.type){
     case 'SELECT_TILE': {
+      if(transit){
+        return state
+      }
+
       const {tile} = action;
       const {tileId} = tile;
   
@@ -164,6 +169,18 @@ const selectReducer = (state = initState, action) =>{
         ...state,
         matched: null,
         currentWord: currentWord + 1
+      }
+    }
+    case 'TRANSIT_ON': {
+      return{
+        ...state,
+        transit: true
+      }
+    }
+    case 'TRANSIT_OFF': {
+      return{
+        ...state,
+        transit: false
       }
     }
     default:
