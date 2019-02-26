@@ -1,19 +1,45 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { hintsData } from '../hintsData';
 
-const Hints = () => {
-  const hint = {
-    one: {id: 1, body: "Six Letters"},
-    two: {id: 2, body: "A man who has people working for him"},
-    three: {id: 3, body: "Having or showing very great skill or proficiency"}
+const Hints = (props) => {
+  const {matched, hintPos} = props;
+
+  if(matched === "true"){
+    setTimeout(() => {
+      props.restoreMatch();
+      props.nextHint();
+    }, 1500);
   }
 
   return(
     <div className="hints">
-      <div>( 1 / 8 ) {hint.one.body}</div>
-      <div>{hint.two.body}</div>
-      <div>{hint.three.body}</div>
+      <div className="hintone">
+        ( {hintPos + 1} / 8 ) {hintsData[hintPos][0].body}
+        <span className={"check " + ((matched === "true")? "enable" : "disable")}> - Good </span>
+      </div>
+      <div>{hintsData[hintPos][1].body}</div>
+      <div>{hintsData[hintPos][2].body}</div>
     </div>
   )
 }
 
-export default Hints
+const mapStateToProps = (state) => {
+  return {
+    matched: state.select.matched,
+    hintPos: state.hints.currentHint
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    restoreMatch: () => {
+      dispatch({type: 'RESTORE_MATCH'})
+    },
+    nextHint: () => {
+      dispatch({type: 'NEXT_HINT'})
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Hints)

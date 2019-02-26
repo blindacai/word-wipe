@@ -126,3 +126,21 @@ body{
 .hints div{
   padding-bottom: 5px;
 }
+
+.hints .hintone{
+  position: relative;
+}
+
+.hintone .check{
+  position: absolute;
+  right: 10%;
+}
+
+.hintone .enable{
+  visibility: visible;
+  color: green;
+}
+
+.hintone .disable{
+  visibility: hidden;
+}

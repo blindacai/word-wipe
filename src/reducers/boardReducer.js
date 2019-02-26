@@ -1,3 +1,5 @@
+// import { targets } from './hintReducer';
+
 const randomChar = () => {
   const r = Math.floor(Math.random() * 26);
   return String.fromCharCode(65 + r);

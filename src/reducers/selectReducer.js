@@ -8,15 +8,24 @@
 //   },
 //   allselected: [20, 30, 40],
 //   direction: "down",
-//   matched: "false"
+//   matched: "false",
+//   currentWord: 0
 // }
 
-const initState = 
+import { targets } from '../hintsData';
+
+const clearState = 
 {
   selected: {},
   allselected: [],
   direction: null,
   matched: null
+}
+
+const initState =
+{
+  ...clearState,
+  currentWord: 0
 }
 
 const newTile = (tile) => {
@@ -28,20 +37,20 @@ const newTile = (tile) => {
   }
 }
 
-const currentOnly = (tile) => {
+const currentOnly = (state, tile) => {
   // construct a new tile
   const {tileId} = tile;
   const newtile = newTile(tile);
 
   return {
+    ...state,
+    ...clearState,
     selected: {[tileId]: newtile},
-    allselected: [tileId],
-    direction: null,
-    matched: null
+    allselected: [tileId]
   }
 }
 
-const newSelect = (state, tile) => {
+const newState = (state, tile) => {
   const {selected, allselected} = state;
   const {tileId} = tile;
   return {
@@ -54,8 +63,8 @@ const newSelect = (state, tile) => {
   };
 }
 
-const changeCSS = (newselect, newcss) => {
-  let {selected, allselected} = newselect
+const changeCSS = (newstate, newcss) => {
+  let {selected, allselected} = newstate
   for (let i in allselected){
     const tid = allselected[i];
     const tile = selected[tid];
@@ -70,12 +79,12 @@ const changeCSS = (newselect, newcss) => {
   return selected;
 }
 
-const checkTarget = (newselect) => {
-  return false;
+const checkTarget = (newstate) => {
+  return true;
 }
 
 const selectReducer = (state = initState, action) =>{
-  const {selected, allselected, direction, matched} = state;
+  const {selected, allselected, direction, matched, currentWord} = state;
 
   switch(action.type){
     case 'SELECT_TILE': {
@@ -83,8 +92,8 @@ const selectReducer = (state = initState, action) =>{
       const {tileId} = tile;
   
       // clear all the previously selected tiles
-      if(matched === "false"){
-        return currentOnly(tile);
+      if(matched != null){
+        return currentOnly(state, tile);
       }
   
       // when click on an already selected tile
@@ -97,58 +106,65 @@ const selectReducer = (state = initState, action) =>{
   
       const length = allselected.length;
       if(length === 0){
-        return currentOnly(tile);
+        return currentOnly(state, tile);
       }
   
       const lastileId = allselected[length - 1];
       const lastile = selected[lastileId];
   
-      let newselect = newSelect(state, tile);
+      let newstate = newState(state, tile);
   
       if(length === 1){
         if(tileId === lastile.id + 1){
-          newselect = {
-            ...newselect,
+          newstate = {
+            ...newstate,
             direction: "right"
           }
         }
         else if(tileId === lastile.id + 10){
-          newselect = {
-            ...newselect,
+          newstate = {
+            ...newstate,
             direction: "down"
           }
         }
         else{
-          return currentOnly(tile);
+          return currentOnly(state, tile);
         }
       }
       else{
         if( !(direction === "right" && tileId === lastile.id + 1) &&
             !(direction === "down" && tileId === lastile.id + 10) ){
-              return currentOnly(tile);
+              return currentOnly(state, tile);
         }
         else 
-        if (newselect.allselected.length > 3){
-          let matched = "";
+        if (newstate.allselected.length === targets[state.currentWord].length){
+          let newmatched = "";
           let newcss = "";
   
-          if( checkTarget(newSelect) ){
-            matched = "true"
+          if( checkTarget(newstate) ){
+            newmatched = "true";
             newcss = (direction === "right")? "matchHori" : "matchVert";
           }
           else{
-            matched = "false";
+            newmatched = "false";
             newcss = (direction === "right")? "matchHoriFail" : "matchVertFail";
           }
   
-          newselect = {
-            ...newselect,
-            selected: changeCSS(newselect, newcss),
-            matched: matched
+          newstate = {
+            ...newstate,
+            selected: changeCSS(newstate, newcss),
+            matched: newmatched,
           }
         }
       }
-      return newselect;
+      return newstate;
+    }
+    case 'RESTORE_MATCH': {
+      return{
+        ...state,
+        matched: null,
+        currentWord: currentWord + 1
+      }
     }
     default:
       return state
